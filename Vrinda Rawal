@@ -1,0 +1,313 @@
+Name : Vrinda Rawal
+Course : Bsc Hons Statistics 1st year
+Roll no : 20191243
+
+Q1.
+Create database library;
+use library;
+Create table library_books (
+Accession_number int primary key,
+Title varchar(50) not null,
+Author varchar(50) not null,
+Department varchar(50) not null,
+Purchase_date date not null,
+Price decimal(7,2) not null);
+
+Create table issued_books (
+Accession_number int not null,
+Borrower varchar(50) not null,
+Foreign key (accession_number)  references library_books(accession_number));
+
+(a)	
+Primary key : accession_number in table library_books
+foreign key : accession_number in table issued_books
+Insert into library_books values
+(1, ‘Discrete Maths’, ‘Navathe’, ‘Maths’, ‘1999-02-05’, 550),
+(2, ‘Database System Concepts’, ‘Sudarshan S’, ‘CS’, ‘2001-11-07’, 450),
+(3, ‘Fundamentals of Mathematical Sciences’, ‘SC Gupta’, ‘Statistics’, ‘2005-10-04’,300),
+(4, ‘Programming Language of Oracle’,’Bayross’, ‘CS’, ‘2003-05-12’, 600),
+(5, ‘Fundamentals of Database System’, ‘Navathe’, ‘CS’, ‘2007-12-24’, 200) ;
+
+Insert into issued_books values
+(1, ‘Helen’),
+(2,’Henry’),
+(3,’John’),
+(2,’Jake’),
+(5,’Kelen’) ;
+(b)
+Delete from library_books where title=’Database System Concepts’;
+(c)
+Update library_books set department=’CS’ where title = ‘Discrete Maths’;
+(d)
+Select title from library_books where department=’CS’;
+(e)
+Select title from library_books where department=’CS’ and author=’Navathe’;
+(f)
+select library_books.title from library_books join issued_books on library_books.accession_number = issued_books.accession_number where department=’CS’ ;
+(g)
+select title from library_books where price<500 and purchase_date>’1999-01-01’ and purchase_date < ‘2004-01-01’ ;
+
+
+Q2.
+create database students;
+use students;
+create table personal_info (
+roll_no int primary key,
+name varchar(30) not null,
+DOB date not null,
+Address varchar(50) not null,
+Marks_12th int not null,
+Phone_no varchar(10) not null
+);
+
+Create table paper_details(
+Paper_code int primary key,
+Paper_name varchar(30) unique);
+
+Create table academic_details(
+Roll_no int primary_key,
+Paper_code int not null,
+Attendance int not null,
+Marks int not null,
+Foreign key (roll_no) references personal_info (roll_no) on delete cascade,
+Foreign key (paper_code) references paper_details (paper_code) on delete cascade);
+
+(a)
+Primary key - Roll_no in table personal_info,  Paper_code in table Paper_details
+Foreign key - Roll_no in table Academic_details, Paper_code in table Academic_Details
+Insert into personal_info values (1205,’Helen’,’2001-11-07’,’Delhi’,’9454123456’),
+(1212,’Henry’,’2000-12-12’,’Delhi’,’9656123456’),
+(1234,’John’,’2001-12-18’,’Uttarakhand’,’9412345678’),
+(1222,’Jake’,’2000-09-09’,’Kerala’,’9812345678’),
+(1209,’Harry’,’2001-01-01’,’Delhi’,’9812347654’);
+
+Insert into paper_details values(1,’Descriptive Statistics’),
+(2,’English’),
+(3,’Calculus’),
+(4,’Algebra’),
+(5,’Probability’);
+
+Insert into academic_details values(1212,1,89,78),
+(1205,3,88,76),
+(1234,1,56,76),
+(1222,1,89,89),
+(1209,2,89,90);
+
+(b)	
+Select pd.paper_code, pd.paper_name, pi.name from paper_details pd, personal_info pi where paper_code=2 and pi.roll_no in 
+(select roll_no from academic_details where paper_code=2 and attendance>75 and marks>60);
+(c)
+Select name from personal_info pi, academic_details ad
+Where pi.roll_no = ad.roll_no and ad.marks>60 and ad.paper_code=1 and pi.address=’Delhi’ ;
+(d)
+select pi.name, ad.attendence, ad.marks from personal_info pi, academic_details ad where pi.roll_no=ad.roll_no; 
+(e)	
+select name from personal_info pi, academic_details ad 
+where pi.roll_no=ad.roll_no and pi.roll_no = (select roll_no from academic_details where marks=(select max(marks) from academic_details));
+
+
+Q3.
+create database bicycles;
+use bicycles;
+create table customer (custid int primary key, 
+email varchar(100) not null,
+ name varchar(50) not null, 
+phone varchar(10) unique, 
+referrerid int);
+
+create table bicycle_model (modelno int primary key, manufacturer varchar(50), style varchar(50));
+
+create table bicycle (bicycleid int primary key,
+ date_purchased date not null, 
+color varchar(20) not null, 
+custid int not null, 
+modelno int not null, 
+foreign key (custid) references customer (custid) on delete cascade
+foreign key (modelno) references bicycle_model (modelno) on delete cascade);
+
+create table service (start_date date, bicycleid int, end_date date, foreign key (bicycleid) references bicycle (bicycleid) on delete cascade);
+
+(a)
+primary key : custid in table customer, modelno in table bicycle_model, bicycleid in table bicycle
+foreign key : custid in table bicycle, modelno in table bicycle, bicycleid in table service
+
+insert into customer values
+(1234, ‘abc@gmail.com’, ‘Helen’, ‘9012345678’, 3423),
+(2343, ‘bcd@gmail.com’, ‘Harry’, ‘9856123466’, 4523),
+(2013, ‘afd@gmail.com’, ‘Henry’, ‘9834567890’, 6534),
+(2015, ‘fgd@gmail.com’, ‘Jake’, ‘9845673456’, 5463),
+(3598, ‘hg@gmail.com’, ‘John’, ‘9123456789’, 7825);
+
+Insert into bicycle values
+(20, ‘2002-12-12’, ‘red’, 1234, 45),
+(21, ‘2003-02-26’, ‘black’, 2343, 46),
+(29, ‘2005-11-07’, ‘white’, 1234, 56),
+(32, ‘2009-12-09’, ‘grey’, 2013, 42),
+(31, ‘2012-12-12’, ‘black’, 3598, 76);
+ 
+Insert into bicycle_model values
+(45, ‘Honda’, ‘Activa’),
+(42, ‘Mahindra’, ‘Bike’),
+(76, ‘Honda’, ‘Scooty’),
+(45, ‘Hero’, ‘Bike’),
+(56, ‘Honda’, ‘Sport’);
+
+Insert into service values
+(‘2009-05-09’, 20, ‘2009-10-12’),
+(‘2010-12-18’, 21, ‘2011-01-19’),
+(‘2012-07-18’, 31, ‘2012-09-12’),
+(‘2015-09-09’, 21, ‘2015-11-11’),
+(‘2016-11-16’, 20, ‘2016-12-29’);
+(b)
+Select * from customer where custid in (Select custid from bicycle where modelno in(select Modelno from bicycle_model where manufacturer=‘Honda’));
+(c)
+Select * from bicycle_model where modelno in (select modelno from bicycle where custid in (select custid from customer where referrerid=3423));
+(d)
+select bm.manufacturer from bicycle b, bicyclemodel bm where bi.modelno=bm.modelno  and bi.color="red";
+(e)
+select modelno from bicycle where bicycleid in (select distinct bicycleid from service);
+
+
+Q4.
+create database employees;
+use employess;
+create table employee(
+person_name varchar(50) primary key,
+street varchar(50),
+city varchar(50));
+
+create table company (
+company_name varchar(50) primary key,
+city varchar(50));
+
+create table works(
+person_name varchar(50),
+company_name varchar(50),
+salary decimal(10,3),
+foreign key (person_name) references employee(person_name) on delete cascade,
+foreign key(company_name) references company(company_name) on delete cascade);
+ 
+create table manages(
+person_name varchar(50),
+manager_name varchar(50),
+foreign key (person_name) references employee(person_name) on delete cascade);
+
+insert into employee values
+(‘Helen’,’23 Hudson’,’Delhi’),
+(‘Harry’,’24 Milton’, ‘Dehradun’),
+(‘Henry’, ’24 Lane’,’Delhi’),
+(‘John’, ’12 Lane’,’Delhi’),
+(‘Jake,’1 Hudson’,’Gurgaon’));
+
+Insert into company values
+(‘Samba Bank’,’Delhi’),
+(‘Axis Bank’,’Kerala’),
+(‘SBI Bank’,’Delhi’),
+(‘NCB bank’,’Noida’),
+(‘Samba Bank’,’Gurgaon’);
+
+Insert into works values
+(‘Henry’,’Samba bank’,200000),
+(‘Helen’,’Axis Bank’,’500000,
+(‘Harry’ ,’NCB bank’, 3400000),
+(‘John’, ‘Axis bank’, 45000),
+(‘Jake’,’NCB bank’,450000);
+
+Insert into manages values
+(‘Henry’,’Tina’),
+(‘Harry’,’John’),
+(‘Helen’,’ Alan’),
+(‘John’, ‘Daisy’),
+(‘Jake’,’Jake’);
+(a)
+primary key: person_name in table employee, company_name in table company
+foreign key: person_name from table works, company_table in table works, person_name in table manages
+
+(b)
+alter table employee
+ add column email varchar(20);
+(c)
+select distinct(manager_name) from manages m, works w where m.person_name=w.person_name and (w.company_name="Samba bank" or w.Company_name="NCB Bank"); 
+(d)	
+select e.person_name, e.street, e.city, w.salary from employee e, works w where e.person_name=w.person_name and w.company_name="Samba Bank" and w.salary>10000;
+(e)	
+select e.person_name from employee e, works w, company c where e.person_name=w.person_name and e.city=c.city and w.company_name=c.company_name;
+(f)
+select company_name, max(salary), min(salary), avg(salary) from works 
+group by company_name; 
+(g)
+select company_name, sum(salary), count(company_name) as "number of employees" from works group by company_name;
+(h)
+select company_name, 
+max(salary) from works;
+
+
+Q5.
+Create database parts;
+Use parts;
+create table suppliers (sno int primary key, sname varchar (50), status int, scity varchar(100));
+create table parts (pno int primary key, pname varchar(50), color varchar(20), weight int, city varchar(50));
+create table project (jno int primary key, jname varchar (50), jcity varchar(50));
+create table shipment (sno int, pno int, jno int, quantity int, foreign key (sno) references suppliers (sno) on delete cascade, foreign key (pno) references parts (pno) on delete cascade, foreign key (jno) references projects (jno) on delete cascade);
+
+insert into suppliers values
+(1, ‘s1’, 21, ‘Paris’),
+(2, ‘s2’, 34, ‘USA’),
+(3, ‘s3’, 45, ‘Delhi’),
+(4, ‘s4’, 35, ‘London’),
+(5, ‘s5’, 19, ‘Helsinki’);
+
+Insert into parts values
+(1, ‘p1’, ‘red’, 14, ‘Paris’),
+(2, ‘p2’, ‘black’, 20, ‘London’),
+(3, ‘p3’, ‘white’, 35, ‘Delhi’),
+(4, ‘p4’, ‘green’, 16, ‘Helsinki’),
+(5, ‘p5’, ‘yellow’, 30, ‘Mumbai’);
+
+Insert into project values
+(1, ‘j1’, ‘Paris’),
+(2, ‘j2’, ‘London’),
+(3, ‘j3’, ‘USA’),
+(4, ‘j4’, ‘Paris’),
+(5, ‘j5’, ‘London’);
+
+Insert into Shipment values
+(1,2, 3,370),
+(2,3,4,760),
+(2,1,4,650),
+(5,1,2,450),
+(5,5,1,400);
+(a)
+primary key : sno in table suppliers, pno in table parts, jno in table project
+foreign key : sno in table shipment, pno in table shipment, jno in table project
+(b)
+select sno from suppliers where scity=‘Paris’ and status>20;
+(c)
+Select * from suppliers where sno in (select sno from shipment where pno in (select pno from parts where pname=‘p2’)) Order by sno;
+(d)
+Select sname from suppliers where sno in (Select distinct sno from shipment where pno in(select pno from parts where pname!=‘p2’));
+(e)
+select s.sno, s.pno, s.jno, s.quantity, s.quantity*p.weight as "Total_shipment_weight" from shipment s, parts p where s.pno=p.pno;
+(f)
+Select * from shipment where quantity between 300 and 750;
+(g)
+select pno from parts where weight>16 or pno in(select pno from shipment where sno in(select s.sno from shipment s, suppliers su where s.sno=su.sno and su.sname="s2"));
+(h)
+select city from parts where colour="Red" and pno in(select pno from shipment where quantity>5);
+(i)
+select * from parts where pno in(select Pno from shipment where sno in(select sno from suppliers where Scity="London"));
+(j)	
+select pno from shipment where sno in(select sno from suppliers where scity=’London’) and jno in(Select jno from project where Jcity=’London’);
+(k)
+select count(distinct(Jno)) as "No. of Project Supplied by supplier S1" from shipment where sno in(select sno from suppliers where Sname=’s1’);
+(l)	
+select count(*) from parts where Pno in(Select Pno from shipment where sno in(select Sno from suppliers where sname =’s1’)) and Pname=’p1’;
+
+
+
+
+
+
+
+
+
